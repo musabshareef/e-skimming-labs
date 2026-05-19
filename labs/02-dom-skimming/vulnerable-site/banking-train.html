@@ -33,7 +33,7 @@
         </div>
         <div class="user-info">
           <span class="welcome">Welcome, John Doe</span>
-          <button class="logout-btn" aria-label="Logout Button" onclick="sessionStorage.removeItem('firebase_token');document.cookie='firebase_token=;path=/;max-age=0;SameSite=None;Secure';document.cookie='firebase_token=;path=/;max-age=0;SameSite=Lax';window.location.href='/'">Logout</button>
+          <button class="logout-btn" aria-label="Logout Button" onclick="sessionStorage.removeItem('firebase_token');document.cookie='firebase_token=;path=/;max-age=0;SameSite=None;Secure';document.cookie='firebase_token=;path=/;max-age=0;SameSite=Lax';fetch('/api/auth/logout',{method:'POST',credentials:'include'}).finally(function(){window.location.href='/'})">Logout</button>
         </div>
       </div>
     </header>
@@ -41,9 +41,9 @@
     <!-- Navigation Buttons Row (Above Lab Tabs) -->
     <div class="nav-buttons-row">
       <div class="container">
-        <a href="#" class="nav-button back-button" id="back-button" aria-label="Back Button">← Back to Labs</a>
-        <a href="#" class="nav-button c2-button" id="view-stolen-button" target="_blank" aria-label="View Stolen Data">🕵️ View Stolen Data</a>
-        <a href="#" class="nav-button writeup-button" id="writeup-button" aria-label="Lab Writeup">📖 Writeup</a>
+        <a href="#" class="nav-button back-button" id="back-button" data-nav="labsHome" aria-label="Labs Home">← Labs Home</a>
+        <a href="#" class="nav-button c2-button" id="view-stolen-button" data-nav="attackServer" target="_blank" aria-label="Attack Server">🕵️ Attack Server</a>
+        <a href="#" class="nav-button writeup-button" id="writeup-button" data-nav="writeup" aria-label="Lab Writeup">📖 Writeup</a>
       </div>
     </div>
 
