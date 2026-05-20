@@ -17,7 +17,7 @@ This lab checks the specific e-skimming variant: hidden page instructions plus p
 
 ```bash
 cd labs/03-extension-hijacking/official-ai-extension-harness
-npm install
+npm ci
 npm test
 ```
 
@@ -26,6 +26,8 @@ To run only the real extension fixture:
 ```bash
 npm run test:extension
 ```
+
+The extension fixture launches Chromium headful because Chromium extension loading is not reliable in normal headless mode. In CI or server-only environments, run it with a display/Xvfb; display-related failures do not mean the DOM-surface harness is failing.
 
 ## Expected Result
 
@@ -49,4 +51,3 @@ References:
 
 - https://support.claude.com/en/articles/12902428-using-claude-in-chrome-safely
 - https://developer.chrome.com/docs/extensions/develop/concepts/activeTab
-

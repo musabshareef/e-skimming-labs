@@ -12,7 +12,17 @@ function contentType(filePath) {
 async function startStaticServer(rootDir) {
   const server = http.createServer((request, response) => {
     const requestPath = new URL(request.url || '/', 'http://127.0.0.1').pathname
-    const normalizedPath = path.normalize(decodeURIComponent(requestPath)).replace(/^(\.\.[/\\])+/, '')
+    let decodedPath
+
+    try {
+      decodedPath = decodeURIComponent(requestPath)
+    } catch {
+      response.writeHead(400)
+      response.end('Bad request')
+      return
+    }
+
+    const normalizedPath = path.normalize(decodedPath).replace(/^(\.\.[/\\])+/, '')
     const filePath = path.join(rootDir, normalizedPath === '/' ? 'checkout.html' : normalizedPath)
 
     if (!filePath.startsWith(rootDir)) {
@@ -45,4 +55,3 @@ async function startStaticServer(rootDir) {
 }
 
 module.exports = { startStaticServer }
-

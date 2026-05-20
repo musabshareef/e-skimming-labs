@@ -1,7 +1,22 @@
 const { test, expect, chromium } = require('@playwright/test')
+const fs = require('fs/promises')
 const os = require('os')
 const path = require('path')
 const { startStaticServer } = require('./helpers/static-server')
+
+function installCaptureListener() {
+  window.__aiReaderCaptures = []
+  window.addEventListener('message', event => {
+    if (
+      event.origin === window.location.origin &&
+      event.data &&
+      event.data.source === 'lab3-official-ai-reader-fixture' &&
+      event.data.type === 'OFFICIAL_AI_READER_CAPTURE'
+    ) {
+      window.__aiReaderCaptures.push(event.data.payload)
+    }
+  })
+}
 
 test.describe('Chromium MV3 fixture extension', () => {
   let server
@@ -15,13 +30,12 @@ test.describe('Chromium MV3 fixture extension', () => {
   })
 
   test('control page has no AI reader capture without extension loaded', async ({ page }) => {
+    await page.addInitScript(installCaptureListener)
     await page.goto(`${server.origin}/checkout.html`)
     await page.fill('#cardNumber', '4242424242424242')
+    await page.waitForTimeout(250)
 
-    const captureCount = await page.evaluate(() => {
-      window.__aiReaderCaptures = []
-      return window.__aiReaderCaptures.length
-    })
+    const captureCount = await page.evaluate(() => window.__aiReaderCaptures.length)
 
     expect(captureCount).toBe(0)
   })
@@ -41,14 +55,7 @@ test.describe('Chromium MV3 fixture extension', () => {
 
     try {
       const page = await context.newPage()
-      await page.addInitScript(() => {
-        window.__aiReaderCaptures = []
-        window.addEventListener('message', event => {
-          if (event.data && event.data.type === 'OFFICIAL_AI_READER_CAPTURE') {
-            window.__aiReaderCaptures.push(event.data.payload)
-          }
-        })
-      })
+      await page.addInitScript(installCaptureListener)
 
       await page.goto(`${server.origin}/checkout.html`)
       await page.fill('#billingName', 'Ada Lovelace')
@@ -79,7 +86,7 @@ test.describe('Chromium MV3 fixture extension', () => {
       )
     } finally {
       await context.close()
+      await fs.rm(userDataDir, { recursive: true, force: true })
     }
   })
 })
-

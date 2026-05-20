@@ -3,7 +3,6 @@
   "name": "Lab 3 Official AI Reader Fixture",
   "version": "1.0.0",
   "description": "Educational fixture that models an AI assistant extension reading page content.",
-  "permissions": ["storage"],
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
@@ -13,4 +12,3 @@
     }
   ]
 }
-
